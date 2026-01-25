@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MN NAIM OTT PORTAL</title>
+
+<!-- Stable hls.js -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui;
+  background:linear-gradient(120deg,#060,#600);
+  color:#fff;
+}
+.header{
+  padding:14px;
+  text-align:center;
+  font-weight:900;
+  font-size:20px;
+  background:linear-gradient(90deg,#ff3c3c,#ffb347);
+}
+.wrap{
+  max-width:700px;
+  margin:auto;
+  padding:12px;
+}
+.section-title{
+  margin:14px 0 6px;
+  font-weight:800;
+  font-size:16px;
+  opacity:.9;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:10px;
+}
+.card{
+  background:#111;
+  padding:10px;
+  border-radius:14px;
+  text-align:center;
+  transition:0.3s;
+  border:1px solid #222;
+}
+.card:hover{
+  box-shadow:0 0 12px #0ff;
+}
+.card h4{
+  margin:6px 0;
+  font-size:14px;
+}
+.card button{
+  width:100%;
+  padding:8px;
+  border:none;
+  border-radius:30px;
+  background:linear-gradient(90deg,#00ff88,#00c6ff);
+  font-weight:700;
+  cursor:pointer;
+}
+.player{
+  margin-top:14px;
+  background:#000;
+  border-radius:16px;
+  overflow:hidden;
+}
+video,iframe{
+  width:100%;
+  height:260px;
+  background:#000;
+}
+.multi{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:10px;
+}
+.status{
+  text-align:center;
+  font-size:12px;
+  margin-top:6px;
+  opacity:.7;
+}
+.tg-pop{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#229ED9;
+  padding:12px 16px;
+  border-radius:40px;
+  font-weight:900;
+  animation:pulse 2s infinite;
+}
+.tg-pop a{
+  color:#fff;
+  text-decoration:none;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(34,158,217,.6)}
+  70%{box-shadow:0 0 0 14px rgba(34,158,217,0)}
+  100%{box-shadow:0 0 0 0 rgba(34,158,217,0)}
+}
+.input{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  margin-top:10px;
+}
+.btn{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:40px;
+  margin-top:8px;
+  background:linear-gradient(90deg,#00ff88,#00c6ff);
+  font-weight:900;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">MN NAIM OTT PORTAL</div>
+
+<div class="wrap">
+
+<div class="section-title">🔴 LIVE CHANNELS</div>
+<div class="grid" id="liveGrid"></div>
+
+<div class="section-title">🟡 UPCOMING CHANNELS</div>
+<div class="grid" id="upcomingGrid"></div>
+
+<div class="section-title">▶️ SINGLE LINK</div>
+<input id="singleLink" class="input" placeholder="Paste m3u8 / mp4 / embed link">
+<button class="btn" onclick="playSingle()">PLAY SINGLE</button>
+
+<div class="player" id="singlePlayer"></div>
+
+<div class="section-title">📺 MULTI PLAYER (2 Matches)</div>
+<div class="multi" id="multiPlayer"></div>
+
+<div class="status" id="status">Ready</div>
+
+</div>
+
+<div class="tg-pop">
+  <a href="https://t.me/ClipByNaim" target="_blank">Join Telegram</a>
+</div>
+
+<script>
+// Playlist examples
+const liveChannels = [
+  {title:"BAN vs IND", url:"https://1a-1791.com/live/gke17oc4/slot-9/pulq-z8jy_1080p/chunklist_DVR.m3u8"},
+  {title:"AUS vs ENG", url:"https://test-streams.mux.dev/test_001/stream.m3u8"},
+  {title:"BPL RW vs CTR", url:"https://test-streams.mux.dev/test_002/stream.m3u8"}
+];
+
+const upcomingChannels = [
+  {title:"Caribbean League", time:"Tomorrow", url:"https://test-streams.mux.dev/upcoming1.m3u8"},
+  {title:"PSL", time:"Tonight 8:00 PM", url:"https://test-streams.mux.dev/upcoming2.m3u8"}
+];
+
+const liveGrid=document.getElementById("liveGrid");
+const upcomingGrid=document.getElementById("upcomingGrid");
+const singlePlayer=document.getElementById("singlePlayer");
+const multiPlayer=document.getElementById("multiPlayer");
+const status=document.getElementById("status");
+
+function createCard(ch){
+  const div=document.createElement("div");
+  div.className="card";
+  const h=document.createElement("h4");
+  h.innerText=ch.title+(ch.time?" — "+ch.time:"");
+  const btn=document.createElement("button");
+  btn.innerText="PLAY";
+  btn.onclick=()=>playSingle(ch.url);
+  div.appendChild(h);
+  div.appendChild(btn);
+  return div;
+}
+
+// Populate grids
+liveChannels.forEach(c=>liveGrid.appendChild(createCard(c)));
+upcomingChannels.forEach(c=>upcomingGrid.appendChild(createCard(c)));
+
+// Player creation
+function createPlayer(url){
+  if(url.includes(".m3u8")){
+    const v=document.createElement("video");
+    v.controls=1; v.autoplay=1; v.playsInline=1;
+    if(Hls.isSupported()){
+      const h=new Hls({lowLatencyMode:true});
+      h.loadSource(url);
+      h.attachMedia(v);
+    }else v.src=url;
+    return v;
+  }else{
+    const f=document.createElement("iframe");
+    f.src=url;
+    f.allow="autoplay;fullscreen";
+    return f;
+  }
+}
+
+// Single player
+function playSingle(url){
+  const link=url||singleLink.value.trim();
+  if(!link) return;
+  singlePlayer.innerHTML="";
+  singlePlayer.appendChild(createPlayer(link));
+  multiPlayer.innerHTML="";
+  status.innerText="Single match playing";
+}
+
+// Multi player demo
+function playMulti(a,b){
+  multiPlayer.innerHTML="";
+  multiPlayer.appendChild(createPlayer(a));
+  multiPlayer.appendChild(createPlayer(b));
+  status.innerText="Multi match mode";
+}
+
+// Auto-play via ?src=
+const p=new URLSearchParams(location.search).get("src");
+if(p){ singleLink.value=p; playSingle(p); }
+
+</script>
+
+</body>
+</html>
