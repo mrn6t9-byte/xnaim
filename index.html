@@ -27,15 +27,21 @@ body{margin:0;font-family:'Inter',sans-serif;background:#02090c;color:#fff;}
 .countdown{font-size:14px;margin-top:6px;}
 
 .live-badge{
-  position:absolute;top:-12px;left:50%;transform:translateX(-50%);
-  padding:6px 18px;border-radius:20px;
-  font-weight:900;font-size:14px;
-  background:#ff0022;color:#fff;
+  position:absolute;
+  top:-12px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:6px 18px;
+  border-radius:20px;
+  font-weight:900;
+  font-size:14px;
+  background:#ff0022;
+  color:#fff;
   box-shadow:0 0 15px #ff0022;
   display:none;
-  animation:pulse 1s infinite alternate;
+  animation:livePulse 1s infinite alternate;
 }
-@keyframes pulse{
+@keyframes livePulse{
   from{box-shadow:0 0 10px #ff0022;}
   to{box-shadow:0 0 30px #ff3355;}
 }
@@ -50,15 +56,6 @@ body{margin:0;font-family:'Inter',sans-serif;background:#02090c;color:#fff;}
 .player-title{text-align:center;font-size:28px;font-weight:800;color:#ffdd00;margin:12px 0;}
 .player-box{background:#000;border-radius:24px;overflow:hidden;}
 video{width:100%;height:280px;background:#000;}
-
-.live-btn{
-  width:100%;margin:12px 0;padding:14px;
-  border:none;border-radius:18px;
-  font-size:18px;font-weight:900;
-  color:#fff;background:#ff0022;
-  box-shadow:0 0 15px #ff0022;
-  animation:pulse 1s infinite alternate;
-}
 
 .source-btn{
   width:100%;padding:14px;margin:10px 0;
@@ -98,8 +95,6 @@ video{width:100%;height:280px;background:#000;}
     <video id="video" controls playsinline></video>
   </div>
 
-  <button class="live-btn" onclick="video.play()">🔴 LIVE</button>
-
   <div id="sources"></div>
 
   <div class="controls">
@@ -114,6 +109,7 @@ video{width:100%;height:280px;background:#000;}
 <script>
 let hls;
 const video=document.getElementById("video");
+const list=document.getElementById("listPage");
 
 const matches=[
 {
@@ -144,7 +140,7 @@ const matches=[
 },
 {
  title:"AUS vs WI",
- sub:"U19 World Cup • 01:00 PM",
+ sub:"U19 WC • 01:00 PM",
  left:"https://flagcdn.com/w80/au.png",
  right:"https://flagcdn.com/w80/vc.png",
  start:"2026-01-28T13:00:00",
@@ -183,15 +179,13 @@ const matches=[
 }
 ];
 
-const list=document.getElementById("listPage");
-
 matches.forEach(m=>{
  const card=document.createElement("div");
  card.className="match-card";
 
  const live=document.createElement("div");
  live.className="live-badge";
- live.innerText="🔴 LIVE";
+ live.innerText="🔴 LIVE NOW";
  card.appendChild(live);
 
  card.innerHTML+=`
@@ -210,11 +204,12 @@ matches.forEach(m=>{
  const start=new Date(m.start);
 
  setInterval(()=>{
-  if(new Date()>=start){
+  const now=new Date();
+  if(now>=start){
     cd.innerText="";
     live.style.display="block";
   }else{
-    const d=start-new Date();
+    const d=start-now;
     cd.innerText=`Starts in ${Math.floor(d/36e5)}h ${Math.floor(d%36e5/6e4)}m`;
   }
  },1000);
