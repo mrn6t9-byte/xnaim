@@ -16,8 +16,9 @@ body{margin:0;font-family:'Inter','Roboto Mono',sans-serif;background:#02090c;co
 .match-info{text-align:center;flex:1;}
 .match-title{font-size:26px;font-weight:700;}
 .match-sub{font-size:16px;color:#ccc;margin-top:4px;}
-.badge{position:absolute;top:12px;right:12px;padding:4px 10px;border-radius:12px;font-weight:700;font-size:12px;box-shadow:0 0 10px rgba(0,0,0,.5);}
-.live{background:#ff0033;box-shadow:0 0 10px #ff0033;}
+.badge{position:absolute;top:12px;right:12px;padding:4px 10px;border-radius:12px;font-weight:700;font-size:12px;}
+.live-badge{background:#ff0033;color:#fff;animation:glow 1.5s infinite alternate;box-shadow:0 0 15px #ff0033,0 0 30px #ff0033,0 0 45px #ff0033;}
+@keyframes glow{0%{box-shadow:0 0 10px #ff0033,0 0 20px #ff0033,0 0 30px #ff0033;}50%{box-shadow:0 0 20px #ff0033,0 0 40px #ff0033,0 0 60px #ff0033;}100%{box-shadow:0 0 10px #ff0033,0 0 20px #ff0033,0 0 30px #ff0033;}}
 .countdown{font-size:13px;margin-top:4px;color:#fff;display:block;text-align:center;}
 
 /* PLAYER OVERLAY */
@@ -90,7 +91,7 @@ const matches=[
  ]
 },
 {
- title:"AUS VS WI",
+ title:"Aus VS WI",
  sub:"U19 World Cup • 01:00 PM",
  left:"https://flagcdn.com/w80/au.png",
  right:"https://flagcdn.com/w80/vc.png",
@@ -135,11 +136,9 @@ const list=document.getElementById("listPage");
 matches.forEach(m=>{
  const card=document.createElement("div");
  card.className="match-card";
-
  const badge=document.createElement("div");
- badge.className="badge";
+ badge.className="badge upcoming";
  card.appendChild(badge);
-
  card.innerHTML+=`
    <img class="flag" src="${m.left}">
    <div class="match-info">
@@ -154,15 +153,14 @@ matches.forEach(m=>{
 
  const startTime=new Date(m.start);
  const countdownSpan=card.querySelector(".countdown");
-
  setInterval(()=>{
    const now = new Date();
-   let diff = startTime - now;
+   const diff = startTime - now;
    if(diff <= 0){
-     badge.className="badge live";
-     badge.innerText="LIVE NOW";
+     badge.className="badge live-badge";
+     badge.innerText="LIVE";
      countdownSpan.innerText="";
-   }else{
+   } else{
      const h=Math.floor(diff/36e5);
      const m2=Math.floor(diff%36e5/6e4);
      countdownSpan.innerText=`Starts in ${h}h ${m2}m`;
