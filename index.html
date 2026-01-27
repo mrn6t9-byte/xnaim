@@ -38,6 +38,7 @@ body{
   cursor:pointer;
   transition:.25s;
   position:relative;
+  overflow:hidden;
 }
 .match-card:hover{transform:scale(1.03);}
 .flag{
@@ -72,6 +73,7 @@ body{
   align-items:center;
   justify-content:center;
   color:#fff;
+  transition:all 0.3s ease;
 }
 .live-badge{
   background:#ff0033;
@@ -89,6 +91,31 @@ body{
   color:#fff;
   display:block;
   text-align:center;
+}
+
+/* LIVE overlay */
+.live-overlay{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:#ff0033;
+  padding:12px 28px;
+  border-radius:24px;
+  font-family:'Orbitron',sans-serif;
+  font-weight:800;
+  font-size:20px;
+  color:#fff;
+  box-shadow:0 0 15px #ff0033,0 0 30px #ff0033,0 0 45px #ff0033;
+  animation:blink 1s infinite alternate;
+  display:none;
+  pointer-events:none;
+  z-index:5;
+}
+@keyframes blink{
+  0%{transform:translate(-50%,-50%) scale(1);opacity:0.7;}
+  50%{transform:translate(-50%,-50%) scale(1.1);opacity:1;}
+  100%{transform:translate(-50%,-50%) scale(1);opacity:0.7;}
 }
 
 /* PLAYER */
@@ -200,7 +227,6 @@ video{
 let hls;
 const video=document.getElementById("video");
 
-// Match Data
 const matches=[
 {
  title:"RSA VS WI",
@@ -212,58 +238,6 @@ const matches=[
    {name:"FOX Sports 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
    {name:"Cricbuzz 1",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=303629"},
    {name:"Super Sports",link:"https://allinonereborn.xyz/vip/live.php?id=778400"},
-   {name:"Willow",link:"https://allinonereborn.xyz/vip/live.php?id=778395"}
- ]
-},
-{
- title:"IND VS NZ",
- sub:"4th T20 • 07:30 PM",
- left:"https://flagcdn.com/w80/in.png",
- right:"https://flagcdn.com/w80/nz.png",
- start:"2026-01-28T19:30:00",
- sources:[
-   {name:"FOX 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
-   {name:"Sky Sports Cricket",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=10527"},
-   {name:"TNT Sports 1",link:"https://allinonereborn.xyz/vip/live.php?id=1084873"},
-   {name:"Willow",link:"https://allinonereborn.xyz/vip/live.php?id=778395"}
- ]
-},
-{
- title:"AUS vs WI",
- sub:"U19 World Cup • 01:00 PM",
- left:"https://flagcdn.com/w80/au.png",
- right:"https://flagcdn.com/w80/vc.png",
- start:"2026-01-28T13:00:00",
- sources:[
-   {name:"FOX 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
-   {name:"Sky Sports Cricket",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=10527"},
-   {name:"TNT Sports 1",link:"https://allinonereborn.xyz/vip/live.php?id=1084873"},
-   {name:"Willow",link:"https://allinonereborn.xyz/vip/live.php?id=778395"}
- ]
-},
-{
- title:"BAN W vs TH W",
- sub:"2nd ODI • 09:15 AM",
- left:"https://flagcdn.com/w80/bd.png",
- right:"https://flagcdn.com/w80/th.png",
- start:"2026-01-28T09:15:00",
- sources:[
-   {name:"FOX 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
-   {name:"Sky Sports Cricket",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=10527"},
-   {name:"TNT Sports 1",link:"https://allinonereborn.xyz/vip/live.php?id=1084873"},
-   {name:"Willow",link:"https://allinonereborn.xyz/vip/live.php?id=778395"}
- ]
-},
-{
- title:"SL vs RSA",
- sub:"U19 WC• 13:00 PM",
- left:"https://flagcdn.com/w80/lk.png",
- right:"https://flagcdn.com/w80/za.png",
- start:"2026-01-29T13:00:00",
- sources:[
-   {name:"FOX 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
-   {name:"Sky Sports Cricket",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=10527"},
-   {name:"TNT Sports 1",link:"https://allinonereborn.xyz/vip/live.php?id=1084873"},
    {name:"Willow",link:"https://allinonereborn.xyz/vip/live.php?id=778395"}
  ]
 }
@@ -278,6 +252,12 @@ matches.forEach(m=>{
  badge.className="badge upcoming";
  badge.innerText="";
  card.appendChild(badge);
+
+ const liveOverlay=document.createElement("div");
+ liveOverlay.className="live-overlay";
+ liveOverlay.innerText="LIVE NOW";
+ card.appendChild(liveOverlay);
+
  card.innerHTML+=`
    <img class="flag" src="${m.left}">
    <div class="match-info">
@@ -292,21 +272,26 @@ matches.forEach(m=>{
 
  const startTime=new Date(m.start);
  const countdownSpan=card.querySelector(".countdown");
- setInterval(()=>{
+
+ function updateBadge(){
    const diff=startTime-new Date();
    if(diff<=0){
      badge.className="badge live-badge";
      badge.innerText="LIVE";
      countdownSpan.style.display="none";
+     liveOverlay.style.display="flex"; // overlay show
    } else{
      badge.className="badge upcoming";
      badge.innerText="";
      countdownSpan.style.display="block";
+     liveOverlay.style.display="none"; // overlay hide
      const h=Math.floor(diff/36e5);
      const m2=Math.floor(diff%36e5/6e4);
      countdownSpan.innerText=`Starts in ${h}h ${m2}m`;
    }
- },1000);
+ }
+updateBadge();
+setInterval(updateBadge,1000);
 });
 
 function openMatch(m){
@@ -340,5 +325,6 @@ function goBack(){video.pause();document.getElementById("playerPage").style.disp
 function pip(){document.pictureInPictureElement?document.exitPictureInPicture():video.requestPictureInPicture();}
 function share(){navigator.share?navigator.share({text:"🔴 LIVE MATCH WATCH NOW | MN X NAIM"}):alert("🔴 LIVE MATCH WATCH NOW | MN X NAIM");}
 </script>
+
 </body>
 </html>
