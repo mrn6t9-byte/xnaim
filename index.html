@@ -2,236 +2,219 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MN NAIM OTT PORTAL</title>
-
-<!-- Stable hls.js -->
-<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
-
+<title>MN X NAIM LIVE</title>
 <style>
-*{box-sizing:border-box}
 body{
-  margin:0;
-  font-family:system-ui;
-  background:linear-gradient(120deg,#060,#600);
+  background:#0e0e0e;
   color:#fff;
+  font-family:Arial,sans-serif;
 }
-.header{
-  padding:14px;
-  text-align:center;
-  font-weight:900;
-  font-size:20px;
-  background:linear-gradient(90deg,#ff3c3c,#ffb347);
-}
-.wrap{
-  max-width:700px;
-  margin:auto;
-  padding:12px;
-}
-.section-title{
-  margin:14px 0 6px;
-  font-weight:800;
-  font-size:16px;
-  opacity:.9;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:10px;
-}
-.card{
-  background:#111;
-  padding:10px;
+.match-card{
+  border:2px solid #00ff99;
   border-radius:14px;
+  padding:14px;
+  margin:15px 0;
+  background:linear-gradient(90deg, #ff0000, #00ff00, #0000ff, #ff0000);
+  background-size:300% 300%;
+  animation:rgb 5s linear infinite;
+}
+@keyframes rgb{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+.match-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.team{
   text-align:center;
-  transition:0.3s;
-  border:1px solid #222;
 }
-.card:hover{
-  box-shadow:0 0 12px #0ff;
+.team img{
+  width:48px;
 }
-.card h4{
-  margin:6px 0;
-  font-size:14px;
-}
-.card button{
-  width:100%;
-  padding:8px;
-  border:none;
-  border-radius:30px;
-  background:linear-gradient(90deg,#00ff88,#00c6ff);
-  font-weight:700;
-  cursor:pointer;
-}
-.player{
-  margin-top:14px;
-  background:#000;
-  border-radius:16px;
-  overflow:hidden;
-}
-video,iframe{
-  width:100%;
-  height:260px;
-  background:#000;
-}
-.multi{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin-top:10px;
-}
-.status{
-  text-align:center;
-  font-size:12px;
-  margin-top:6px;
-  opacity:.7;
-}
-.tg-pop{
-  position:fixed;
-  bottom:20px;
-  right:20px;
-  background:#229ED9;
-  padding:12px 16px;
-  border-radius:40px;
-  font-weight:900;
-  animation:pulse 2s infinite;
-}
-.tg-pop a{
+.time{
   color:#fff;
-  text-decoration:none;
-}
-@keyframes pulse{
-  0%{box-shadow:0 0 0 0 rgba(34,158,217,.6)}
-  70%{box-shadow:0 0 0 14px rgba(34,158,217,0)}
-  100%{box-shadow:0 0 0 0 rgba(34,158,217,0)}
-}
-.input{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:none;
-  margin-top:10px;
+  font-weight:bold;
 }
 .btn{
-  width:100%;
-  padding:12px;
+  background:linear-gradient(90deg,#ff0044,#00ff55,#00aaff,#ff0044);
+  background-size:300% 300%;
+  animation:rgb 6s linear infinite;
   border:none;
-  border-radius:40px;
-  margin-top:8px;
-  background:linear-gradient(90deg,#00ff88,#00c6ff);
-  font-weight:900;
+  color:#fff;
+  padding:10px;
+  margin:6px 0;
+  border-radius:12px;
   cursor:pointer;
+  font-weight:bold;
+}
+.btn:hover{color:#000;}
+.popup{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+}
+.popup-content{
+  background:linear-gradient(90deg,#ff0044,#00ff55,#00aaff,#ff0044);
+  background-size:300% 300%;
+  animation:rgb 6s linear infinite;
+  margin:15% auto;
+  padding:20px;
+  width:80%;
+  border-radius:12px;
+  color:#fff;
+}
+.close{float:right;cursor:pointer;color:red;font-weight:bold;}
+.tg{
+  text-align:center;
+  margin:25px 0;
+}
+.tg a{
+  color:#00ff99;
+  text-decoration:none;
+  font-size:18px;
+}
+video{
+  width:100%;
+  border-radius:12px;
 }
 </style>
 </head>
-
 <body>
 
-<div class="header">MN NAIM OTT PORTAL</div>
-
-<div class="wrap">
-
-<div class="section-title">🔴 LIVE CHANNELS</div>
-<div class="grid" id="liveGrid"></div>
-
-<div class="section-title">🟡 UPCOMING CHANNELS</div>
-<div class="grid" id="upcomingGrid"></div>
-
-<div class="section-title">▶️ SINGLE LINK</div>
-<input id="singleLink" class="input" placeholder="Paste m3u8 / mp4 / embed link">
-<button class="btn" onclick="playSingle()">PLAY SINGLE</button>
-
-<div class="player" id="singlePlayer"></div>
-
-<div class="section-title">📺 MULTI PLAYER (2 Matches)</div>
-<div class="multi" id="multiPlayer"></div>
-
-<div class="status" id="status">Ready</div>
-
-</div>
-
-<div class="tg-pop">
-  <a href="https://t.me/ClipByNaim" target="_blank">Join Telegram</a>
-</div>
+<h2 style="text-align:center;">🔥 Live / Upcoming Matches Demo</h2>
 
 <script>
-// Playlist examples
-const liveChannels = [
-  {title:"BAN vs IND", url:"https://1a-1791.com/live/gke17oc4/slot-9/pulq-z8jy_1080p/chunklist_DVR.m3u8"},
-  {title:"AUS vs ENG", url:"https://test-streams.mux.dev/test_001/stream.m3u8"},
-  {title:"BPL RW vs CTR", url:"https://test-streams.mux.dev/test_002/stream.m3u8"}
-];
-
-const upcomingChannels = [
-  {title:"Caribbean League", time:"Tomorrow", url:"https://test-streams.mux.dev/upcoming1.m3u8"},
-  {title:"PSL", time:"Tonight 8:00 PM", url:"https://test-streams.mux.dev/upcoming2.m3u8"}
-];
-
-const liveGrid=document.getElementById("liveGrid");
-const upcomingGrid=document.getElementById("upcomingGrid");
-const singlePlayer=document.getElementById("singlePlayer");
-const multiPlayer=document.getElementById("multiPlayer");
-const status=document.getElementById("status");
-
-function createCard(ch){
-  const div=document.createElement("div");
-  div.className="card";
-  const h=document.createElement("h4");
-  h.innerText=ch.title+(ch.time?" — "+ch.time:"");
-  const btn=document.createElement("button");
-  btn.innerText="PLAY";
-  btn.onclick=()=>playSingle(ch.url);
-  div.appendChild(h);
-  div.appendChild(btn);
-  return div;
+function openPopup(id){document.getElementById(id).style.display="block";}
+function closePopup(id){document.getElementById(id).style.display="none";}
+function playLink(url){
+  const video=document.createElement('video');
+  video.src=url;
+  video.controls=true;
+  video.autoplay=true;
+  video.playsInline=true;
+  const content=document.getElementById('videoContainer');
+  content.innerHTML='';
+  content.appendChild(video);
 }
-
-// Populate grids
-liveChannels.forEach(c=>liveGrid.appendChild(createCard(c)));
-upcomingChannels.forEach(c=>upcomingGrid.appendChild(createCard(c)));
-
-// Player creation
-function createPlayer(url){
-  if(url.includes(".m3u8")){
-    const v=document.createElement("video");
-    v.controls=1; v.autoplay=1; v.playsInline=1;
-    if(Hls.isSupported()){
-      const h=new Hls({lowLatencyMode:true});
-      h.loadSource(url);
-      h.attachMedia(v);
-    }else v.src=url;
-    return v;
-  }else{
-    const f=document.createElement("iframe");
-    f.src=url;
-    f.allow="autoplay;fullscreen";
-    return f;
-  }
-}
-
-// Single player
-function playSingle(url){
-  const link=url||singleLink.value.trim();
-  if(!link) return;
-  singlePlayer.innerHTML="";
-  singlePlayer.appendChild(createPlayer(link));
-  multiPlayer.innerHTML="";
-  status.innerText="Single match playing";
-}
-
-// Multi player demo
-function playMulti(a,b){
-  multiPlayer.innerHTML="";
-  multiPlayer.appendChild(createPlayer(a));
-  multiPlayer.appendChild(createPlayer(b));
-  status.innerText="Multi match mode";
-}
-
-// Auto-play via ?src=
-const p=new URLSearchParams(location.search).get("src");
-if(p){ singleLink.value=p; playSingle(p); }
-
 </script>
+
+<!-- MATCH 1 -->
+<div class="match-card">
+  <div class="match-header">
+    <div class="team">
+      <img src="https://flagcdn.com/w80/bd.png"><br>BD
+    </div>
+    <div class="time">08:00 PM</div>
+    <div class="team">
+      <img src="https://flagcdn.com/w80/in.png"><br>IND
+    </div>
+  </div>
+  <button class="btn" onclick="openPopup('m1')">Watch Now</button>
+</div>
+
+<div class="popup" id="m1">
+  <div class="popup-content" id="videoContainer">
+    <span class="close" onclick="closePopup('m1')">✖</span>
+    <h3>Select Source</h3>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">TNT Sports</button>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">FanCode</button>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">SonyLiv</button>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">CRICFy Live</button>
+  </div>
+</div>
+
+<!-- MATCH 2 -->
+<div class="match-card">
+  <div class="match-header">
+    <div class="team"><img src="https://flagcdn.com/w80/sa.png"><br>SA</div>
+    <div class="time">10:00 PM</div>
+    <div class="team"><img src="https://flagcdn.com/w80/wi.png"><br>WI</div>
+  </div>
+  <button class="btn" onclick="openPopup('m2')">Watch Now</button>
+</div>
+
+<div class="popup" id="m2">
+  <div class="popup-content" id="videoContainer">
+    <span class="close" onclick="closePopup('m2')">✖</span>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">TNT Sports</button>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">FanCode</button>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">SonyLiv</button>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">CRICFy Live</button>
+  </div>
+</div>
+
+<!-- MATCH 3 -->
+<div class="match-card">
+  <div class="match-header">
+    <div class="team"><img src="https://flagcdn.com/w80/pk.png"><br>PAK</div>
+    <div class="time">07:30 PM</div>
+    <div class="team"><img src="https://flagcdn.com/w80/af.png"><br>AFG</div>
+  </div>
+  <button class="btn" onclick="openPopup('m3')">Watch Now</button>
+</div>
+
+<div class="popup" id="m3">
+  <div class="popup-content" id="videoContainer">
+    <span class="close" onclick="closePopup('m3')">✖</span>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">TNT Sports</button>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">FanCode</button>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">SonyLiv</button>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">CRICFy Live</button>
+  </div>
+</div>
+
+<!-- MATCH 4 -->
+<div class="match-card">
+  <div class="match-header">
+    <div class="team"><img src="https://flagcdn.com/w80/au.png"><br>AUS</div>
+    <div class="time">09:00 PM</div>
+    <div class="team"><img src="https://flagcdn.com/w80/nz.png"><br>NZ</div>
+  </div>
+  <button class="btn" onclick="openPopup('m4')">Watch Now</button>
+</div>
+
+<div class="popup" id="m4">
+  <div class="popup-content" id="videoContainer">
+    <span class="close" onclick="closePopup('m4')">✖</span>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">TNT Sports</button>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">FanCode</button>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">SonyLiv</button>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">CRICFy Live</button>
+  </div>
+</div>
+
+<!-- MATCH 5 -->
+<div class="match-card">
+  <div class="match-header">
+    <div class="team"><img src="https://flagcdn.com/w80/gb-eng.png"><br>ENG</div>
+    <div class="time">11:00 PM</div>
+    <div class="team"><img src="https://flagcdn.com/w80/lk.png"><br>SL</div>
+  </div>
+  <button class="btn" onclick="openPopup('m5')">Watch Now</button>
+</div>
+
+<div class="popup" id="m5">
+  <div class="popup-content" id="videoContainer">
+    <span class="close" onclick="closePopup('m5')">✖</span>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">TNT Sports</button>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">FanCode</button>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">SonyLiv</button>
+    <button class="btn" onclick="playLink('https://allinonereborn.xyz/mix.m3u8/live4.php?id=303627')">CRICFy Live</button>
+  </div>
+</div>
+
+<!-- TELEGRAM -->
+<div class="tg">
+  📢 Join our Telegram:  
+  <br>
+  <a href="https://t.me/+EUu_2FFLJsdmMGU9" target="_blank">
+    👉 CLICK HERE
+  </a>
+</div>
 
 </body>
 </html>
