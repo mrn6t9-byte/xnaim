@@ -4,36 +4,173 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MN X NAIM LIVE 🔴</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <style>
-body{margin:0;font-family:'Inter','Roboto Mono',sans-serif;background:#02090c;color:#fff;}
-.header{text-align:center;padding:22px;font-size:34px;font-weight:700;color:#ffdd00;text-shadow:0 0 20px #ffdd00;}
-#listPage{max-width:620px;margin:auto;padding:12px;}
-.match-card{display:flex;align-items:center;justify-content:space-between;padding:18px;margin:16px 0;border-radius:24px;background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);box-shadow:0 0 25px rgba(0,0,0,.6);cursor:pointer;transition:.25s;position:relative;}
+body{
+  margin:0;
+  font-family:'Roboto Mono', 'Orbitron', monospace;
+  background:#02090c;
+  color:#fff;
+}
+.header{
+  text-align:center;
+  padding:22px;
+  font-size:34px;
+  font-weight:700;
+  color:#ffdd00;
+  text-shadow:0 0 20px #ffdd00;
+}
+#listPage{
+  max-width:620px;
+  margin:auto;
+  padding:12px;
+}
+.match-card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px;
+  margin:16px 0;
+  border-radius:24px;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  box-shadow:0 0 25px rgba(0,0,0,.6);
+  cursor:pointer;
+  transition:.25s;
+  position:relative;
+}
 .match-card:hover{transform:scale(1.03);}
-.flag{width:52px;height:34px;border-radius:6px;}
-.match-info{text-align:center;flex:1;}
-.match-title{font-size:26px;font-weight:700;}
-.match-sub{font-size:16px;color:#ccc;margin-top:4px;}
-.badge{position:absolute;top:12px;right:12px;padding:4px 10px;border-radius:12px;font-weight:700;font-size:12px;}
-.live-badge{background:#ff0033;color:#fff;animation:glow 1.5s infinite alternate;box-shadow:0 0 15px #ff0033,0 0 30px #ff0033,0 0 45px #ff0033;}
-@keyframes glow{0%{box-shadow:0 0 10px #ff0033,0 0 20px #ff0033,0 0 30px #ff0033;}50%{box-shadow:0 0 20px #ff0033,0 0 40px #ff0033,0 0 60px #ff0033;}100%{box-shadow:0 0 10px #ff0033,0 0 20px #ff0033,0 0 30px #ff0033;}}
-.countdown{font-size:13px;margin-top:4px;color:#fff;display:block;text-align:center;}
+.flag{
+  width:52px;
+  height:34px;
+  border-radius:6px;
+}
+.match-info{
+  text-align:center;
+  flex:1;
+}
+.match-title{
+  font-size:26px;
+  font-weight:700;
+}
+.match-sub{
+  font-size:16px;
+  color:#ccc;
+  margin-top:4px;
+}
+.badge{
+  position:absolute;
+  top:12px;
+  right:12px;
+  padding:6px 14px;
+  border-radius:14px;
+  font-weight:800;
+  font-family:'Orbitron',sans-serif;
+  font-size:14px;
+  text-align:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+}
+.live-badge{
+  background:#ff0033;
+  animation:glow 1.5s infinite alternate;
+  box-shadow:0 0 15px #ff0033,0 0 30px #ff0033,0 0 45px #ff0033;
+}
+@keyframes glow{
+  0%{text-shadow:0 0 5px #ff0033,0 0 10px #ff0033;}
+  50%{text-shadow:0 0 15px #ff0033,0 0 30px #ff0033;}
+  100%{text-shadow:0 0 25px #ff0033,0 0 50px #ff0033;}
+}
+.countdown{
+  font-size:13px;
+  margin-top:4px;
+  color:#fff;
+  display:block;
+  text-align:center;
+}
 
-/* PLAYER OVERLAY */
-#playerPage{display:none;position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:999;padding:18px;overflow:auto;}
-.back{font-size:18px;color:#38f2e0;cursor:pointer;font-weight:600;margin-bottom:12px;}
-.player-title{text-align:center;font-size:28px;font-weight:700;color:#ffdd00;margin:12px 0;}
-.player-box{background:#000;border-radius:24px;overflow:hidden;margin:12px 0;}
-video{width:100%;height:280px;background:#000;border-radius:12px;}
-.source-btn{width:100%;padding:14px;margin:10px 0;border:none;border-radius:16px;font-size:16px;font-weight:700;cursor:pointer;background:linear-gradient(90deg,#ff004c,#ffb300,#00e5ff,#ff004c);background-size:300% 300%;animation:rgb 6s linear infinite;color:#fff;}
-.controls{display:flex;gap:10px;margin-top:12px;}
-.ctrl{flex:1;padding:14px;border:none;border-radius:16px;font-weight:700;cursor:pointer;}
+/* PLAYER */
+#playerPage{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.97);
+  z-index:999;
+  padding:18px;
+  overflow:auto;
+}
+.back{
+  font-size:18px;
+  color:#38f2e0;
+  cursor:pointer;
+  font-weight:600;
+  margin-bottom:12px;
+}
+.player-title{
+  text-align:center;
+  font-size:28px;
+  font-weight:700;
+  color:#ffdd00;
+  margin:12px 0;
+}
+.player-box{
+  background:#000;
+  border-radius:24px;
+  overflow:hidden;
+  margin:12px 0;
+}
+video{
+  width:100%;
+  height:280px;
+  background:#000;
+  border-radius:12px;
+}
+.source-btn{
+  width:100%;
+  padding:14px;
+  margin:10px 0;
+  border:none;
+  border-radius:16px;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  background:linear-gradient(90deg,#ff004c,#ffb300,#00e5ff,#ff004c);
+  background-size:300% 300%;
+  animation:rgb 6s linear infinite;
+  color:#fff;
+}
+.controls{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+}
+.ctrl{
+  flex:1;
+  padding:14px;
+  border:none;
+  border-radius:16px;
+  font-weight:700;
+  cursor:pointer;
+}
 .play{background:#ff6a00;color:#fff;}
 .pip{background:#111;color:#38f2e0;}
 .share{background:#0088cc;color:#fff;}
-.telegram{position:fixed;bottom:20px;right:20px;padding:16px 24px;background:linear-gradient(90deg,#0088cc,#00f2ff);border-radius:28px;font-weight:700;color:#fff;text-decoration:none;box-shadow:0 0 25px rgba(0,255,255,.6);animation:pulse 2s infinite;font-size:16px;}
+.telegram{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  padding:16px 24px;
+  background:linear-gradient(90deg,#0088cc,#00f2ff);
+  border-radius:28px;
+  font-weight:700;
+  color:#fff;
+  text-decoration:none;
+  box-shadow:0 0 25px rgba(0,255,255,.6);
+  animation:pulse 2s infinite;
+  font-size:16px;
+}
 @keyframes rgb{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
 @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
 </style>
@@ -63,6 +200,7 @@ video{width:100%;height:280px;background:#000;border-radius:12px;}
 let hls;
 const video=document.getElementById("video");
 
+// Match Data
 const matches=[
 {
  title:"RSA VS WI",
@@ -91,7 +229,7 @@ const matches=[
  ]
 },
 {
- title:"Aus VS WI",
+ title:"AUS vs WI",
  sub:"U19 World Cup • 01:00 PM",
  left:"https://flagcdn.com/w80/au.png",
  right:"https://flagcdn.com/w80/vc.png",
@@ -104,7 +242,7 @@ const matches=[
  ]
 },
 {
- title:"BAN W VS TH W",
+ title:"BAN W vs TH W",
  sub:"2nd ODI • 09:15 AM",
  left:"https://flagcdn.com/w80/bd.png",
  right:"https://flagcdn.com/w80/th.png",
@@ -117,7 +255,7 @@ const matches=[
  ]
 },
 {
- title:"SL VS RSA",
+ title:"SL vs RSA",
  sub:"U19 WC• 13:00 PM",
  left:"https://flagcdn.com/w80/lk.png",
  right:"https://flagcdn.com/w80/za.png",
@@ -138,6 +276,7 @@ matches.forEach(m=>{
  card.className="match-card";
  const badge=document.createElement("div");
  badge.className="badge upcoming";
+ badge.innerText="";
  card.appendChild(badge);
  card.innerHTML+=`
    <img class="flag" src="${m.left}">
@@ -154,13 +293,15 @@ matches.forEach(m=>{
  const startTime=new Date(m.start);
  const countdownSpan=card.querySelector(".countdown");
  setInterval(()=>{
-   const now = new Date();
-   const diff = startTime - now;
-   if(diff <= 0){
+   const diff=startTime-new Date();
+   if(diff<=0){
      badge.className="badge live-badge";
      badge.innerText="LIVE";
-     countdownSpan.innerText="";
+     countdownSpan.style.display="none";
    } else{
+     badge.className="badge upcoming";
+     badge.innerText="";
+     countdownSpan.style.display="block";
      const h=Math.floor(diff/36e5);
      const m2=Math.floor(diff%36e5/6e4);
      countdownSpan.innerText=`Starts in ${h}h ${m2}m`;
@@ -199,6 +340,5 @@ function goBack(){video.pause();document.getElementById("playerPage").style.disp
 function pip(){document.pictureInPictureElement?document.exitPictureInPicture():video.requestPictureInPicture();}
 function share(){navigator.share?navigator.share({text:"🔴 LIVE MATCH WATCH NOW | MN X NAIM"}):alert("🔴 LIVE MATCH WATCH NOW | MN X NAIM");}
 </script>
-
 </body>
 </html>
