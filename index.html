@@ -66,9 +66,9 @@ const video=document.getElementById("video");
 const matches=[
 {
  title:"RSA VS WI",
- sub:"1st T20• 08:00 PM",
- left:"https://flagcdn.com/w80/za.png",
- right:"https://upload.wikimedia.org/wikipedia/en/thumb/f/f1/West_Indies_cricket_flag.svg/80px-West_Indies_cricket_flag.svg.png",
+ sub:"1st T20 • 08:00 PM",
+ left:"https://flagcdn.com/w80/vc.png",
+ right:"https://flagcdn.com/w80/vc.png",
  start:"2026-01-27T22:00:00",
  sources:[
    {name:"FOX Sports 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
@@ -84,7 +84,7 @@ const matches=[
  right:"https://flagcdn.com/w80/nz.png",
  start:"2026-01-28T19:30:00",
  sources:[
-   {name:"Fox 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
+   {name:"FOX 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
    {name:"Sky Sports Cricket",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=10527"},
    {name:"TNT Sports 1",link:"https://allinonereborn.xyz/vip/live.php?id=1084873"},
    {name:"Willow",link:"https://allinonereborn.xyz/vip/live.php?id=778395"}
@@ -94,10 +94,10 @@ const matches=[
  title:"AUS VS WI",
  sub:"U19 World Cup • 01:00 PM",
  left:"https://flagcdn.com/w80/au.png",
- right:"https://upload.wikimedia.org/wikipedia/en/thumb/f/f1/West_Indies_cricket_flag.svg/80px-West_Indies_cricket_flag.svg.png",
+ right:"https://flagcdn.com/w80/vc.png",
  start:"2026-01-28T13:00:00",
  sources:[
-   {name:"Fox 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
+   {name:"FOX 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
    {name:"Sky Sports Cricket",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=10527"},
    {name:"TNT Sports 1",link:"https://allinonereborn.xyz/vip/live.php?id=1084873"},
    {name:"Willow",link:"https://allinonereborn.xyz/vip/live.php?id=778395"}
@@ -110,7 +110,7 @@ const matches=[
  right:"https://flagcdn.com/w80/th.png",
  start:"2026-01-28T09:15:00",
  sources:[
-   {name:"Fox 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
+   {name:"FOX 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
    {name:"Sky Sports Cricket",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=10527"},
    {name:"TNT Sports 1",link:"https://allinonereborn.xyz/vip/live.php?id=1084873"},
    {name:"Willow",link:"https://allinonereborn.xyz/vip/live.php?id=778395"}
@@ -118,12 +118,12 @@ const matches=[
 },
 {
  title:"SL VS RSA",
- sub:"U19 WC• 13:00 PM",
+ sub:"U19 WC • 13:00 PM",
  left:"https://flagcdn.com/w80/lk.png",
  right:"https://flagcdn.com/w80/za.png",
  start:"2026-01-29T13:00:00",
  sources:[
-   {name:"Fox 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
+   {name:"FOX 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
    {name:"Sky Sports Cricket",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=10527"},
    {name:"TNT Sports 1",link:"https://allinonereborn.xyz/vip/live.php?id=1084873"},
    {name:"Willow",link:"https://allinonereborn.xyz/vip/live.php?id=778395"}
@@ -156,16 +156,18 @@ matches.forEach(m=>{
  const countdownSpan=card.querySelector(".countdown");
 
  const interval=setInterval(()=>{
-   const diff=startTime-new Date();
-   if(diff<=0){
+   const now = new Date();
+   let diff = startTime - now;
+   if(diff <= 0){
      badge.className="badge live";
      badge.innerText="LIVE";
      countdownSpan.innerText="";
      clearInterval(interval);
-   } else{
+   } else {
      const h=Math.floor(diff/36e5);
      const m2=Math.floor(diff%36e5/6e4);
-     countdownSpan.innerText=`Starts in ${h}h ${m2}m`;
+     const s=Math.floor(diff%6e4/1000);
+     countdownSpan.innerText=`Starts in ${h}h ${m2}m ${s}s`;
    }
  },1000);
 });
