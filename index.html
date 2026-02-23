@@ -4,248 +4,115 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MN X NAIM LIVE 🔴</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <style>
-body{margin:0;font-family:'Inter',sans-serif;background:#02090c;color:#fff;}
-.header{text-align:center;padding:22px;font-size:34px;font-weight:800;color:#ffdd00;text-shadow:0 0 20px #ffdd00;}
-#listPage{max-width:650px;margin:auto;padding:14px;}
-
-.match-card{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:18px;margin:18px 0;border-radius:26px;
-  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-  box-shadow:0 0 25px rgba(0,0,0,.6);
-  cursor:pointer;position:relative;
-}
-.flag{width:52px;height:34px;border-radius:6px;}
-.match-info{flex:1;text-align:center;}
-.match-title{font-size:26px;font-weight:800;}
-.match-sub{font-size:16px;color:#ccc;margin-top:4px;}
-.countdown{font-size:14px;margin-top:6px;}
-
-.live-badge{
-  position:absolute;
-  top:-12px;
-  left:50%;
-  transform:translateX(-50%);
-  padding:6px 18px;
-  border-radius:20px;
-  font-weight:900;
-  font-size:14px;
-  background:#ff0022;
-  color:#fff;
-  box-shadow:0 0 15px #ff0022;
-  display:none;
-  animation:livePulse 1s infinite alternate;
-}
-@keyframes livePulse{
-  from{box-shadow:0 0 10px #ff0022;}
-  to{box-shadow:0 0 30px #ff3355;}
-}
-
-/* PLAYER */
-#playerPage{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,.97);z-index:999;
-  padding:16px;overflow:auto;
-}
-.back{font-size:18px;color:#38f2e0;cursor:pointer;font-weight:700;}
-.player-title{text-align:center;font-size:28px;font-weight:800;color:#ffdd00;margin:12px 0;}
-.player-box{background:#000;border-radius:24px;overflow:hidden;}
-video{width:100%;height:280px;background:#000;}
-
-.source-btn{
-  width:100%;padding:14px;margin:10px 0;
-  border:none;border-radius:16px;
-  font-weight:800;cursor:pointer;color:#fff;
-  background:linear-gradient(90deg,#ff004c,#ffb300,#00e5ff,#ff004c);
-  background-size:300% 300%;
-  animation:rgb 6s linear infinite;
-}
-@keyframes rgb{0%{background-position:0% 50%;}100%{background-position:300% 50%;}}
-
-.controls{display:flex;gap:10px;margin-top:10px;}
-.ctrl{flex:1;padding:14px;border:none;border-radius:16px;font-weight:800;cursor:pointer;}
-.play{background:#ff6a00;color:#fff;}
-.pip{background:#111;color:#38f2e0;}
-.share{background:#0088cc;color:#fff;}
-
-.telegram{
-  position:fixed;bottom:20px;right:20px;
-  padding:16px 26px;background:linear-gradient(90deg,#0088cc,#00f2ff);
-  border-radius:30px;font-weight:800;color:#fff;
-  text-decoration:none;box-shadow:0 0 25px rgba(0,255,255,.6);
-}
+body{margin:0;background:#02090c;color:#fff;font-family:'Inter',sans-serif;}
+.header{text-align:center;padding:22px;font-size:28px;font-weight:800;color:#ffdd00;text-shadow:0 0 20px #ffdd00;}
+#matches{max-width:650px;margin:auto;padding:10px;}
+.match-card{background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);border-radius:22px;padding:18px;margin:18px 0;box-shadow:0 0 25px rgba(0,0,0,.6);cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:.3s;}
+.match-card:hover{transform:scale(1.03);}
+.flag{width:56px;border-radius:6px;}
+.match-info{text-align:center;flex:1;margin:0 10px;}
+.match-title{font-size:22px;font-weight:800;color:#00ffe7;text-shadow:0 0 10px #00ffe7;}
+.match-sub{font-size:14px;color:#ddd;margin-top:4px;}
+.timer{font-size:18px;font-weight:700;margin-top:6px;}
+#playerPage{display:none;position:fixed;inset:0;background:#000;z-index:999;padding:15px;overflow:auto;}
+.back{font-size:18px;color:#00ffd5;font-weight:700;cursor:pointer;margin-bottom:10px;}
+.player-title{text-align:center;font-size:22px;font-weight:800;color:#ffdd00;margin:10px 0;}
+.player-container{position:relative;width:100%;padding-top:56.25%;margin-bottom:10px;}
+.player-container > iframe{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:18px;background:#000;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#111;display:flex;justify-content:space-around;padding:10px 0;box-shadow:0 -5px 15px rgba(0,0,0,.5);}
+.bottom-nav button{background:none;border:none;color:#00ffe7;font-weight:800;font-size:14px;cursor:pointer;}
 </style>
 </head>
-
 <body>
 
 <div class="header">MN X NAIM LIVE 🔴</div>
-<div id="listPage"></div>
+<div id="matches"></div>
 
 <div id="playerPage">
   <div class="back" onclick="goBack()">← Back</div>
   <div class="player-title" id="playerTitle"></div>
-
-  <div class="player-box">
-    <video id="video" controls playsinline></video>
-  </div>
-
-  <div id="sources"></div>
-
-  <div class="controls">
-    <button class="ctrl play" onclick="video.play()">▶ PLAY</button>
-    <button class="ctrl pip" onclick="pip()">⧉ PiP</button>
-    <button class="ctrl share" onclick="share()">↗ SHARE</button>
+  <div class="player-container">
+    <iframe id="ytPlayer" frameborder="0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
   </div>
 </div>
 
-<a class="telegram" href="https://t.me/+EUu_2FFLJsdmMGU9" target="_blank">Join Telegram</a>
+<div class="bottom-nav">
+  <button onclick="scrollToTop()">Home</button>
+  <button onclick="alert('Live Matches Coming Soon')">Live</button>
+  <button onclick="alert('Settings Coming Soon')">Settings</button>
+</div>
 
 <script>
-let hls;
-const video=document.getElementById("video");
-const list=document.getElementById("listPage");
-
 const matches=[
-{
- title:"RSA vs WI",
- sub:"1st T20 • 08:00 PM",
- left:"https://flagcdn.com/w80/za.png",
- right:"https://flagcdn.com/w80/vc.png",
- start:"2026-01-27T22:00:00",
- sources:[
-  {name:"FOX Sports 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
-  {name:"Cricbuzz 1",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=303629"},
-  {name:"Super Sports",link:"https://allinonereborn.xyz/vip/live.php?id=778400"},
-  {name:"Willow",link:"https://allinonereborn.xyz/vip/live.php?id=778395"}
- ]
-},
-{
- title:"IND vs NZ",
- sub:"4th T20 • 07:30 PM",
- left:"https://flagcdn.com/w80/in.png",
- right:"https://flagcdn.com/w80/nz.png",
- start:"2026-01-28T19:30:00",
- sources:[
-  {name:"FOX 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
-  {name:"Sky Sports Cricket",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=10527"},
-  {name:"TNT Sports 1",link:"https://allinonereborn.xyz/vip/live.php?id=1084873"},
-  {name:"Willow",link:"https://allinonereborn.xyz/vip/live.php?id=778395"}
- ]
-},
-{
- title:"AUS vs WI",
- sub:"U19 WC • 01:00 PM",
- left:"https://flagcdn.com/w80/au.png",
- right:"https://flagcdn.com/w80/vc.png",
- start:"2026-01-28T13:00:00",
- sources:[
-  {name:"FOX 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
-  {name:"Sky Sports Cricket",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=10527"},
-  {name:"TNT Sports 1",link:"https://allinonereborn.xyz/vip/live.php?id=1084873"},
-  {name:"Willow",link:"https://allinonereborn.xyz/vip/live.php?id=778395"}
- ]
-},
-{
- title:"BAN W vs TH W",
- sub:"2nd ODI • 09:15 AM",
- left:"https://flagcdn.com/w80/bd.png",
- right:"https://flagcdn.com/w80/th.png",
- start:"2026-01-28T09:15:00",
- sources:[
-  {name:"Fancode ",link:"https://bd-mc-fdlive.fancode.com/mumbai/139239_english_hls_cc628989a544774_1ta-di_h264/1080p.m3u8"},
-  {name:"Sky Sports Cricket",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=10527"},
-  {name:"TNT Sports 1",link:"https://allinonereborn.xyz/vip/live.php?id=1084873"},
-  {name:"Willow",link:"https://allinonereborn.xyz/vip/live.php?id=778395"}
- ]
-},
-{
- title:"SL vs RSA",
- sub:"U19 WC • 01:00 PM",
- left:"https://flagcdn.com/w80/lk.png",
- right:"https://flagcdn.com/w80/za.png",
- start:"2026-01-29T13:00:00",
- sources:[
-  {name:"FOX 501",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=197185"},
-  {name:"Sky Sports Cricket",link:"https://allinonereborn.xyz/mix.m3u8/live4.php?id=10527"},
-  {name:"TNT Sports 1",link:"https://allinonereborn.xyz/vip/live.php?id=1084873"},
-  {name:"Willow",link:"https://allinonereborn.xyz/vip/live.php?id=778395"}
- ]
-}
+  {
+    title:"North Zone vs East Zone",
+    sub:"T20 LIVE",
+    left:"https://i.postimg.cc/TwKZjG2n/Picsart-26-02-22-23-00-18-709.png",
+    right:"https://i.postimg.cc/13ddNVhP/Picsart-26-02-22-23-27-15-879.png",
+    youtube:"https://www.youtube.com/live/BVjrCfPTQzA?si=McHMe2Q_pmM1mJ3l"
+  },
+  {
+    title:"South Zone vs Central Zone",
+    sub:"T20 LIVE",
+    left:"https://i.postimg.cc/JnRst61L/Picsart-26-02-22-23-14-30-683.png",
+    right:"https://i.postimg.cc/rmjCx705/Picsart-26-02-22-23-24-26-205.png",
+    youtube:"https://www.youtube.com/live/dg_QmXUfjE4?si=Dldd1h2wXpmEFuXV"
+  }
 ];
 
+const matchesDiv=document.getElementById("matches");
+const playerPage=document.getElementById("playerPage");
+const ytPlayer=document.getElementById("ytPlayer");
+const playerTitle=document.getElementById("playerTitle");
+
+// Create match cards
 matches.forEach(m=>{
- const card=document.createElement("div");
- card.className="match-card";
+  const card=document.createElement("div");
+  card.className="match-card";
+  card.innerHTML=`
+    <img class="flag" src="${m.left}">
+    <div class="match-info">
+      <div class="match-title">${m.title}</div>
+      <div class="match-sub">${m.sub}</div>
+      <div class="timer">LIVE</div>
+    </div>
+    <img class="flag" src="${m.right}">
+  `;
+  matchesDiv.appendChild(card);
 
- const live=document.createElement("div");
- live.className="live-badge";
- live.innerText="🔴 LIVE NOW";
- card.appendChild(live);
-
- card.innerHTML+=`
-  <img class="flag" src="${m.left}">
-  <div class="match-info">
-    <div class="match-title">${m.title}</div>
-    <div class="match-sub">${m.sub}</div>
-    <div class="countdown"></div>
-  </div>
-  <img class="flag" src="${m.right}">
- `;
- card.onclick=()=>openMatch(m);
- list.appendChild(card);
-
- const cd=card.querySelector(".countdown");
- const start=new Date(m.start);
-
- setInterval(()=>{
-  const now=new Date();
-  if(now>=start){
-    cd.innerText="";
-    live.style.display="block";
-  }else{
-    const d=start-now;
-    cd.innerText=`Starts in ${Math.floor(d/36e5)}h ${Math.floor(d%36e5/6e4)}m`;
-  }
- },1000);
+  card.onclick=()=>openMatch(m);
 });
 
+// Extract YouTube ID
+function extractYouTubeID(url){
+  if(url.includes("youtu.be/")) return url.split("youtu.be/")[1].split("?")[0];
+  if(url.includes("/live/")) return url.split("/live/")[1].split("?")[0];
+  if(url.includes("v=")) return url.split("v=")[1].split("&")[0];
+  return "";
+}
+
+// Open match
 function openMatch(m){
- list.style.display="none";
- playerPage.style.display="block";
- playerTitle.innerText=m.title+" • "+m.sub;
-
- const s=document.getElementById("sources");
- s.innerHTML="";
- m.sources.forEach(x=>{
-  const b=document.createElement("button");
-  b.className="source-btn";
-  b.innerText=x.name;
-  b.onclick=()=>load(x.link);
-  s.appendChild(b);
- });
- load(m.sources[0].link);
+  matchesDiv.style.display="none";
+  playerPage.style.display="block";
+  playerTitle.innerText=`${m.title} • ${m.sub}`;
+  const id=extractYouTubeID(m.youtube);
+  ytPlayer.src=`https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+  ytPlayer.style.display="block";
 }
 
-function load(link){
- if(hls)hls.destroy();
- if(Hls.isSupported()){
-  hls=new Hls();
-  hls.loadSource(link);
-  hls.attachMedia(video);
-  hls.on(Hls.Events.MANIFEST_PARSED,()=>video.play());
- }else{
-  video.src=link;video.play();
- }
+// Back button
+function goBack(){
+  playerPage.style.display="none";
+  matchesDiv.style.display="block";
+  ytPlayer.src="";
 }
-function goBack(){video.pause();playerPage.style.display="none";list.style.display="block";}
-function pip(){document.pictureInPictureElement?document.exitPictureInPicture():video.requestPictureInPicture();}
-function share(){navigator.share?navigator.share({text:"🔴 LIVE MATCH | MN X NAIM"}):alert("🔴 LIVE MATCH | MN X NAIM");}
+
+// Scroll to top
+function scrollToTop(){ window.scrollTo({top:0,behavior:"smooth"}); }
 </script>
 
 </body>
